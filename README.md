@@ -35,7 +35,7 @@ A single-file, browser-based classroom exam timer built for exam supervisors. De
 * **Paper vs. Digital Instructions:**
   * Leave **Digital Exam** unchecked to display standard paper-exam desk instructions.
   * Check **Digital Exam** to display the three-column NZQA login and backup instructions.
-* **Display Controls:** Click **⛶ Full Screen** to fill the classroom screen, or **🔍 100%** (or press `Ctrl + 0` / `Cmd + 0`) to ensure browser zoom is at 100%.
+* **Display Controls:** Click **⛶ Full Screen** to fill the classroom screen
 
 ### 2. Running the 3-Hour Exam
 * **Starting the Timer:** Click **Start 3 Hour Exam** at the official start time. Setup controls hide automatically, **Exam Codes** reveal in full, and **Start Time** and **Finish Time** (exact 3-hour mark) populate automatically.
