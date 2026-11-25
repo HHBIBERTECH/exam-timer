@@ -4,6 +4,13 @@ A single-file, browser-based classroom exam timer built for exam supervisors. De
 
 ---
 
+## Getting Started
+
+1. Enter the URL https://hhbibertech.github.io/exam-timer/
+2. Double-click the file to open it in any modern web browser (Chrome, Edge, Safari, or Firefox)—no internet connection or installation required.
+
+---
+
 ## Features
 
 * **Multi-Exam Support (1–3 Concurrent Exams):** Switch between 1, 2, or 3 columns to manage multiple exams running simultaneously in the same room.
@@ -13,13 +20,6 @@ A single-file, browser-based classroom exam timer built for exam supervisors. De
 * **Automated Toilet & Exit Status Banner:** Automatically switches between **Toilets Closed • Students May Not Leave** (first 45 minutes and final 15 minutes) and **Toilets Open • Students May Leave** (middle 2 hours).
 * **Ruler Progress Timeline:** An open-top, color-coded ruler integrated into the countdown panel with 5-, 15-, and 30-minute ticks, **Start**, **1 Hour**, **2 Hours**, and **Finish** milestone badges, and a moving red tracking triangle.
 * **Auto-Save & Refresh Protection:** Saves all inputs, icon states, and active timer timestamps to `localStorage`, and warns before closing or refreshing an active exam.
-
----
-
-## Getting Started
-
-1. Enter the URL https://hhbibertech.github.io/exam-timer/
-2. Double-click the file to open it in any modern web browser (Chrome, Edge, Safari, or Firefox)—no internet connection or installation required.
 
 ---
 
@@ -47,6 +47,8 @@ A single-file, browser-based classroom exam timer built for exam supervisors. De
 ### 3. Saving, Refreshing & Resetting
 * **Accidental Refresh Protection:** If the browser is refreshed mid-exam, the timer, entered text, exam codes, and icon states restore automatically.
 * **Resetting:** Click the muted **Reset Exam** button and confirm the prompt to clear the timer and return to the pre-exam setup screen.
+
+---
 
 ## Author
 **Holger Heinzel (Bibertech)**
