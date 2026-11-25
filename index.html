@@ -786,7 +786,7 @@ button {
                         <button
                             id="headphonesBtn1"
                             type="button"
-                            class="rule-icon-btn"
+                            class="rule-icon-btn crossed"
                             title="Toggle Headphones Allowed / Prohibited">
                             <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                                 <path d="M12 3a9 9 0 0 0-9 9v7c0 1.1.9 2 2 2h3a1 1 0 0 0 1-1v-6a1 1 0 0 0-1-1H5v-1a7 7 0 0 1 14 0v1h-3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h3c1.1 0 2-.9 2-2v-7a9 9 0 0 0-9-9z"/>
@@ -795,7 +795,7 @@ button {
                         <button
                             id="calculatorBtn1"
                             type="button"
-                            class="rule-icon-btn"
+                            class="rule-icon-btn crossed"
                             title="Toggle Calculator Allowed / Prohibited">
                             <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                                 <path d="M19 2H5c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM7 5h10v3H7V5zm2 14H7v-2h2v2zm0-3.5H7v-2h2v2zm0-3.5H7v-2h2v2zm4 7h-2v-2h2v2zm0-3.5h-2v-2h2v2zm0-3.5h-2v-2h2v2zm4 7h-2v-5.5h2V19zm0-7h-2v-2h2v2z"/>
@@ -831,7 +831,7 @@ button {
                         <button
                             id="headphonesBtn2"
                             type="button"
-                            class="rule-icon-btn"
+                            class="rule-icon-btn crossed"
                             title="Toggle Headphones Allowed / Prohibited">
                             <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                                 <path d="M12 3a9 9 0 0 0-9 9v7c0 1.1.9 2 2 2h3a1 1 0 0 0 1-1v-6a1 1 0 0 0-1-1H5v-1a7 7 0 0 1 14 0v1h-3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h3c1.1 0 2-.9 2-2v-7a9 9 0 0 0-9-9z"/>
@@ -840,7 +840,7 @@ button {
                         <button
                             id="calculatorBtn2"
                             type="button"
-                            class="rule-icon-btn"
+                            class="rule-icon-btn crossed"
                             title="Toggle Calculator Allowed / Prohibited">
                             <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                                 <path d="M19 2H5c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM7 5h10v3H7V5zm2 14H7v-2h2v2zm0-3.5H7v-2h2v2zm0-3.5H7v-2h2v2zm4 7h-2v-2h2v2zm0-3.5h-2v-2h2v2zm0-3.5h-2v-2h2v2zm4 7h-2v-5.5h2V19zm0-7h-2v-2h2v2z"/>
@@ -876,7 +876,7 @@ button {
                         <button
                             id="headphonesBtn3"
                             type="button"
-                            class="rule-icon-btn"
+                            class="rule-icon-btn crossed"
                             title="Toggle Headphones Allowed / Prohibited">
                             <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                                 <path d="M12 3a9 9 0 0 0-9 9v7c0 1.1.9 2 2 2h3a1 1 0 0 0 1-1v-6a1 1 0 0 0-1-1H5v-1a7 7 0 0 1 14 0v1h-3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h3c1.1 0 2-.9 2-2v-7a9 9 0 0 0-9-9z"/>
@@ -885,7 +885,7 @@ button {
                         <button
                             id="calculatorBtn3"
                             type="button"
-                            class="rule-icon-btn"
+                            class="rule-icon-btn crossed"
                             title="Toggle Calculator Allowed / Prohibited">
                             <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                                 <path d="M19 2H5c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM7 5h10v3H7V5zm2 14H7v-2h2v2zm0-3.5H7v-2h2v2zm0-3.5H7v-2h2v2zm4 7h-2v-2h2v2zm0-3.5h-2v-2h2v2zm0-3.5h-2v-2h2v2zm4 7h-2v-5.5h2V19zm0-7h-2v-2h2v2z"/>
@@ -994,7 +994,7 @@ var endTime = null;
 var timerRunning = false;
 var examCount = 2;
 var realExamCodes = { 1: "", 2: "", 3: "" };
-var STORAGE_KEY = "examTimerState_v9";
+var STORAGE_KEY = "examTimerState_v10";
 
 window.addEventListener("beforeunload", function (e) {
     if (timerRunning) {
@@ -1006,6 +1006,7 @@ window.addEventListener("beforeunload", function (e) {
 function clearSavedState() {
     try {
         localStorage.removeItem(STORAGE_KEY);
+        localStorage.removeItem("examTimerState_v9");
         localStorage.removeItem("examTimerState_v8");
         localStorage.removeItem("examTimerState_v7");
         localStorage.removeItem("examTimerState_v6");
@@ -1165,12 +1166,12 @@ function restoreState() {
     document.getElementById("examInstructions2").value = state.examInstructions2 || "";
     document.getElementById("examInstructions3").value = state.examInstructions3 || "";
 
-    document.getElementById("headphonesBtn1").classList.toggle("crossed", Boolean(state.headphones1));
-    document.getElementById("headphonesBtn2").classList.toggle("crossed", Boolean(state.headphones2));
-    document.getElementById("headphonesBtn3").classList.toggle("crossed", Boolean(state.headphones3));
-    document.getElementById("calculatorBtn1").classList.toggle("crossed", Boolean(state.calculator1));
-    document.getElementById("calculatorBtn2").classList.toggle("crossed", Boolean(state.calculator2));
-    document.getElementById("calculatorBtn3").classList.toggle("crossed", Boolean(state.calculator3));
+    document.getElementById("headphonesBtn1").classList.toggle("crossed", state.headphones1 !== undefined ? Boolean(state.headphones1) : true);
+    document.getElementById("headphonesBtn2").classList.toggle("crossed", state.headphones2 !== undefined ? Boolean(state.headphones2) : true);
+    document.getElementById("headphonesBtn3").classList.toggle("crossed", state.headphones3 !== undefined ? Boolean(state.headphones3) : true);
+    document.getElementById("calculatorBtn1").classList.toggle("crossed", state.calculator1 !== undefined ? Boolean(state.calculator1) : true);
+    document.getElementById("calculatorBtn2").classList.toggle("crossed", state.calculator2 !== undefined ? Boolean(state.calculator2) : true);
+    document.getElementById("calculatorBtn3").classList.toggle("crossed", state.calculator3 !== undefined ? Boolean(state.calculator3) : true);
 
     document.getElementById("digitalExam").checked = Boolean(state.digitalExam);
 
