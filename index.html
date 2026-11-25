@@ -1,0 +1,1539 @@
+<!DOCTYPE html>
+<html lang="en-NZ">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Exam Timer</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect x='26' y='2' width='12' height='6' rx='2' fill='%230d47a1'/%3E%3Crect x='30' y='7' width='4' height='5' fill='%230d47a1'/%3E%3Ccircle cx='32' cy='36' r='25' fill='%23ffffff' stroke='%230d47a1' stroke-width='6'/%3E%3Cpath d='M32 20v16l11 7' fill='none' stroke='%23000000' stroke-width='5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+html, body {
+    margin: 0;
+    height: 100%;
+    font-family: Arial, Helvetica, sans-serif;
+    background: #dfe3e8;
+    color: #000000;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    padding: 12px;
+    gap: 12px;
+}
+
+/* PANELS */
+
+.panel {
+    background: #ffffff;
+    border: 2px solid #94a3b8;
+    border-radius: 12px;
+    padding: 10px 16px;
+    box-shadow: 0 2px 6px rgba(0,0,0,.12);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.label {
+    font-size: 0.95rem;
+    font-weight: 800;
+    color: #222222;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+}
+
+/* ROW 1: EXAM NAME & ROW 2: EXAM CODE + SPECIAL INSTRUCTIONS ON ONE LINE */
+
+.exam-header-row {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+}
+
+.exam-header-row.cols-1 {
+    grid-template-columns: 1fr;
+}
+
+.exam-header-row.cols-2 {
+    grid-template-columns: repeat(2, 1fr);
+}
+
+.exam-header-row.cols-3 {
+    grid-template-columns: repeat(3, 1fr);
+}
+
+.exam-name-input,
+.exam-code-input,
+.exam-instructions-input {
+    width: 100%;
+    border: none;
+    outline: none;
+    background: transparent;
+    font-weight: 800;
+    text-align: center;
+    color: #000000;
+}
+
+.exam-name-input::placeholder,
+.exam-instructions-input::placeholder {
+    color: #000000;
+    opacity: 0.45;
+}
+
+.exam-code-input::placeholder {
+    color: #000000;
+    opacity: 0.45;
+    text-transform: lowercase;
+    letter-spacing: normal;
+}
+
+.exam-name-input {
+    font-size: clamp(2.6rem, 4.8vh, 4.4rem);
+    line-height: 1.15;
+}
+
+.cols-3 .exam-name-input {
+    font-size: clamp(2rem, 3.8vh, 3.4rem);
+}
+
+/* COMBINED CODE + INSTRUCTIONS ROW */
+
+.code-instruction-panel {
+    padding: 10px 16px;
+}
+
+.code-instruction-grid {
+    display: grid;
+    grid-template-columns: minmax(150px, 0.42fr) 1fr;
+    gap: 14px;
+    align-items: center;
+}
+
+.cols-3 .code-instruction-grid {
+    grid-template-columns: minmax(120px, 0.45fr) 1fr;
+    gap: 10px;
+}
+
+.code-subbox {
+    border-right: 3px solid #cbd5e1;
+    padding-right: 12px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.instr-subbox {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-width: 0;
+}
+
+.exam-code-input {
+    font-size: clamp(2rem, 3.6vh, 3.2rem);
+    line-height: 1.15;
+    color: #0d47a1;
+    letter-spacing: 3px;
+}
+
+.exam-code-input.masked {
+    color: #000000;
+    letter-spacing: 5px;
+}
+
+.cols-3 .exam-code-input {
+    font-size: clamp(1.5rem, 2.8vh, 2.4rem);
+    letter-spacing: 2px;
+}
+
+.cols-3 .exam-code-input.masked {
+    letter-spacing: 3px;
+}
+
+.instruction-cell {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.exam-instructions-input {
+    flex: 1;
+    min-width: 0;
+    font-size: clamp(1.8rem, 3.2vh, 2.8rem);
+    line-height: 1.15;
+    color: #000000;
+}
+
+.cols-3 .exam-instructions-input {
+    font-size: clamp(1.4rem, 2.5vh, 2.1rem);
+}
+
+/* CLICKABLE HEADPHONES & CALCULATOR ICONS */
+
+.icon-toggles {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.rule-icon-btn {
+    position: relative;
+    width: clamp(46px, 5.5vh, 64px);
+    height: clamp(46px, 5.5vh, 64px);
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    color: #000000;
+    cursor: pointer;
+    user-select: none;
+}
+
+.cols-3 .rule-icon-btn {
+    width: clamp(38px, 4.6vh, 52px);
+    height: clamp(38px, 4.6vh, 52px);
+}
+
+.rule-icon-btn svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+    color: #000000;
+    opacity: 1;
+}
+
+.rule-icon-btn:hover {
+    transform: scale(1.07);
+}
+
+.rule-icon-btn.crossed svg {
+    color: #000000;
+    opacity: 1;
+}
+
+.rule-icon-btn.crossed::after {
+    content: "";
+    position: absolute;
+    left: -8%;
+    right: -8%;
+    top: 50%;
+    height: 7px;
+    margin-top: -3.5px;
+    background: #dc2626;
+    transform: rotate(-45deg);
+    border-radius: 4px;
+    pointer-events: none;
+}
+
+/* TIMES */
+
+.times-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 12px;
+}
+
+.time-value,
+#currentTime {
+    text-align: center;
+    font-size: clamp(2.8rem, 5vh, 4.4rem);
+    font-weight: 800;
+    color: #000000;
+    line-height: 1.1;
+}
+
+/* CONTROLS */
+
+.controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 14px;
+}
+
+button {
+    border-radius: 8px;
+    cursor: pointer;
+    transition: opacity 0.2s ease, background 0.2s ease, transform 0.15s ease;
+}
+
+.start-btn {
+    border: 2px solid #000000;
+    padding: 12px 24px;
+    font-size: 1.1rem;
+    font-weight: 800;
+    background: #0d47a1;
+    color: #ffffff;
+}
+
+.reset-btn,
+.fullscreen-btn {
+    border: 1px solid #94a3b8;
+    padding: 6px 14px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    background: #e2e8f0;
+    color: #475569;
+    opacity: 0.75;
+}
+
+.reset-btn:hover,
+.fullscreen-btn:hover {
+    opacity: 1;
+    background: #cbd5e1;
+    color: #1e293b;
+}
+
+.exam-count-control {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #334155;
+    background: #e2e8f0;
+    padding: 4px 10px;
+    border-radius: 8px;
+    border: 1px solid #94a3b8;
+}
+
+.count-btn {
+    border: 1px solid #94a3b8;
+    background: #ffffff;
+    color: #334155;
+    padding: 3px 9px;
+    font-size: 0.85rem;
+    font-weight: 800;
+    border-radius: 6px;
+}
+
+.count-btn.active {
+    background: #1e293b;
+    color: #ffffff;
+    border-color: #000000;
+}
+
+/* STATUS */
+
+.status-banner {
+    text-align: center;
+    padding: 14px;
+    border-radius: 12px;
+    font-size: clamp(1.7rem, 3vh, 2.6rem);
+    font-weight: 800;
+    border: 3px solid #000000;
+}
+
+.status-open {
+    background: #81c784;
+    color: #052e16;
+    border-color: #14532d;
+}
+
+.status-closed {
+    background: #ffb74d;
+    color: #431407;
+    border-color: #7c2d12;
+}
+
+/* COUNTDOWN + INTEGRATED RULER BOX */
+
+.countdown-box {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background: #ffffff;
+    border: 2px solid #94a3b8;
+    border-radius: 12px;
+    padding: 12px 24px 12px 24px;
+    box-shadow: 0 2px 6px rgba(0,0,0,.12);
+}
+
+.countdown-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.countdown-label {
+    text-align: center;
+    font-size: clamp(1.1rem, 1.8vh, 1.6rem);
+    font-weight: 800;
+    color: #222222;
+    letter-spacing: 3px;
+    margin-bottom: 4px;
+}
+
+#countdown {
+    text-align: center;
+    font-size: clamp(4.6rem, 11vh, 9.2rem);
+    font-weight: 800;
+    color: #000000;
+    line-height: 1;
+}
+
+/* OPEN-TOP RULER TIME SCALE (TIMES + MILESTONE BADGES UNDERNEATH) */
+
+.ruler-panel {
+    width: 100%;
+    flex: 0 0 auto;
+    padding: 36px clamp(48px, 5.5vw, 84px) 62px clamp(48px, 5.5vw, 84px);
+    margin-top: 4px;
+}
+
+.ruler-track {
+    position: relative;
+    width: 100%;
+    height: clamp(44px, 6.2vh, 66px);
+    border-left: 4px solid #000000;
+    border-right: 4px solid #000000;
+    border-bottom: 4px solid #000000;
+    border-top: none;
+    background: linear-gradient(
+        to right,
+        #ffb74d 0%,
+        #ffb74d 25%,
+        #81c784 25%,
+        #81c784 91.6667%,
+        #ffb74d 91.6667%,
+        #ffb74d 100%
+    );
+    overflow: visible;
+}
+
+.ruler-elapsed {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 0%;
+    background: rgba(148, 163, 184, 0.65);
+    pointer-events: none;
+    z-index: 1;
+}
+
+/* LARGE RED TRIANGLE POINTING DOWN ALONG OPEN TOP */
+
+.ruler-needle {
+    position: absolute;
+    top: -36px;
+    left: 0%;
+    width: 46px;
+    height: 36px;
+    margin-left: -23px;
+    z-index: 6;
+    pointer-events: none;
+    filter: drop-shadow(0 2px 3px rgba(0,0,0,0.45));
+}
+
+.ruler-needle svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+/* TICKS RISING FROM BOTTOM EDGE */
+
+.ruler-tick {
+    position: absolute;
+    bottom: 0;
+    background: #000000;
+    transform: translateX(-50%);
+    z-index: 2;
+    pointer-events: none;
+}
+
+.ruler-tick.minor {
+    width: 2px;
+    height: 32%;
+    opacity: 0.7;
+}
+
+.ruler-tick.quarter {
+    width: 3px;
+    height: 55%;
+}
+
+.ruler-tick.major {
+    width: 4px;
+    height: 78%;
+}
+
+.ruler-tick.hour {
+    width: 5px;
+    height: 100%;
+    background: #000000;
+    z-index: 3;
+}
+
+/* TIMES CENTERED DIRECTLY UNDERNEATH THE TICK MARKS */
+
+.ruler-label {
+    position: absolute;
+    top: calc(100% + 7px);
+    transform: translateX(-50%);
+    font-size: clamp(0.9rem, 1.35vw, 1.35rem);
+    font-weight: 800;
+    color: #000000;
+    white-space: nowrap;
+    z-index: 4;
+    pointer-events: none;
+    line-height: 1.1;
+    text-align: center;
+}
+
+/* START, 1 HOUR, 2 HOURS, FINISH BADGES UNDERNEATH THE TIMES */
+
+.ruler-hour-badge {
+    position: absolute;
+    top: calc(100% + 34px);
+    transform: translateX(-50%);
+    background: #1e293b;
+    color: #ffffff;
+    border: 2px solid #000000;
+    border-radius: 6px;
+    padding: 3px 10px;
+    font-size: clamp(0.75rem, 1.15vh, 1rem);
+    font-weight: 800;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    white-space: nowrap;
+    z-index: 5;
+    pointer-events: none;
+}
+
+/* HELP BANNER */
+
+.help-banner {
+    background: #0d47a1;
+    color: #ffffff;
+    border: 3px solid #000000;
+    text-align: center;
+    padding: 14px;
+    border-radius: 12px;
+    font-size: clamp(1.7rem, 2.8vh, 2.5rem);
+    font-weight: 800;
+    box-shadow: 0 2px 6px rgba(0,0,0,.12);
+}
+
+/* PRE-START SCREEN */
+
+.prestart-panel {
+    flex: 1;
+    min-height: 0;
+    background: #ffffff;
+    border: 2px solid #94a3b8;
+    border-radius: 12px;
+    padding: 16px 20px;
+    box-shadow: 0 2px 6px rgba(0,0,0,.12);
+    display: flex;
+    justify-content: center;
+    align-items: stretch;
+    overflow: hidden;
+}
+
+#instructionContainer {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.paper-screen {
+    text-align: center;
+    font-size: clamp(2.2rem, 4.2vh, 3.5rem);
+    font-weight: 800;
+    color: #000000;
+    line-height: 1.38;
+}
+
+.digital-screen {
+    width: 100%;
+    height: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 16px;
+    align-items: stretch;
+}
+
+.digital-column {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    text-align: center;
+    padding: 4px 10px;
+    color: #000000;
+}
+
+.digital-column:not(:last-child) {
+    border-right: 3px solid #94a3b8;
+}
+
+.digital-title {
+    font-size: clamp(1.7rem, 3.2vh, 2.5rem);
+    font-weight: 800;
+    margin-bottom: 10px;
+}
+
+.digital-link {
+    color: #0d47a1;
+    text-decoration: underline;
+    font-size: clamp(1.4rem, 2.6vh, 2.1rem);
+    font-weight: 800;
+}
+
+.digital-highlight {
+    display: inline-block;
+    background: #ffd54f;
+    color: #000000;
+    border: 2px solid #000000;
+    padding: 4px 14px;
+    border-radius: 6px;
+    font-weight: 800;
+    font-size: clamp(1.4rem, 2.5vh, 2rem);
+}
+
+.digital-arrow {
+    font-size: clamp(1.3rem, 2.3vh, 1.9rem);
+    font-weight: 800;
+    line-height: 1.1;
+    margin: 3px 0;
+}
+
+.digital-step {
+    font-size: clamp(1.45rem, 2.7vh, 2.15rem);
+    font-weight: 800;
+    line-height: 1.25;
+}
+
+.hidden {
+    display: none !important;
+}
+
+.digital-option {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: #000000;
+    cursor: pointer;
+    user-select: none;
+}
+
+.digital-option input[type="checkbox"] {
+    width: 22px;
+    height: 22px;
+    cursor: pointer;
+    accent-color: #0d47a1;
+}
+
+.exam-ended {
+    color: #b71c1c !important;
+    font-size: clamp(4rem, 9.5vh, 8rem) !important;
+    font-weight: 800;
+}
+
+/* MOBILE / NARROW SCREENS */
+
+@media (max-width: 900px) {
+    .exam-header-row,
+    .exam-header-row.cols-1,
+    .exam-header-row.cols-2,
+    .exam-header-row.cols-3,
+    .times-row {
+        grid-template-columns: 1fr;
+    }
+
+    .code-instruction-grid,
+    .cols-3 .code-instruction-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .code-subbox {
+        border-right: none;
+        border-bottom: 2px solid #cbd5e1;
+        padding-right: 0;
+        padding-bottom: 8px;
+    }
+
+    .ruler-panel {
+        padding: 34px 28px 54px 28px;
+    }
+
+    .ruler-track {
+        height: 36px;
+    }
+
+    .ruler-label {
+        font-size: 0.78rem;
+    }
+
+    .ruler-hour-badge {
+        top: calc(100% + 26px);
+        font-size: 0.65rem;
+        padding: 2px 6px;
+    }
+
+    .exam-name-input,
+    .cols-3 .exam-name-input,
+    .exam-code-input,
+    .cols-3 .exam-code-input,
+    .time-value,
+    #currentTime {
+        font-size: 2rem;
+    }
+
+    .exam-instructions-input,
+    .cols-3 .exam-instructions-input {
+        font-size: 1.3rem;
+    }
+
+    #countdown {
+        font-size: 3.5rem;
+    }
+
+    .digital-screen {
+        grid-template-columns: 1fr;
+    }
+
+    .digital-column:not(:last-child) {
+        border-right: none;
+        border-bottom: 3px solid #94a3b8;
+        padding-bottom: 20px;
+    }
+
+    .paper-screen {
+        font-size: 1.5rem;
+    }
+
+    .digital-step {
+        font-size: 1.25rem;
+    }
+}
+</style>
+</head>
+<body>
+
+<div id="examNamesRow" class="exam-header-row cols-2">
+    <div id="examNamePanel1" class="panel">
+        <div class="label">Exam Name</div>
+        <input
+            id="examName1"
+            class="exam-name-input"
+            type="text"
+            placeholder="--">
+    </div>
+
+    <div id="examNamePanel2" class="panel">
+        <div class="label">Exam Name</div>
+        <input
+            id="examName2"
+            class="exam-name-input"
+            type="text"
+            placeholder="--">
+    </div>
+
+    <div id="examNamePanel3" class="panel hidden">
+        <div class="label">Exam Name</div>
+        <input
+            id="examName3"
+            class="exam-name-input"
+            type="text"
+            placeholder="--">
+    </div>
+</div>
+
+<div id="examDetailsRow" class="exam-header-row cols-2">
+    <div id="examDetailsPanel1" class="panel code-instruction-panel">
+        <div class="code-instruction-grid">
+            <div class="code-subbox">
+                <div class="label">Exam Code</div>
+                <input
+                    id="examCode1"
+                    class="exam-code-input"
+                    type="text"
+                    inputmode="numeric"
+                    maxlength="6"
+                    placeholder="n/a">
+            </div>
+            <div class="instr-subbox">
+                <div class="label">Special Exam Instructions</div>
+                <div class="instruction-cell">
+                    <input
+                        id="examInstructions1"
+                        class="exam-instructions-input"
+                        type="text"
+                        placeholder="--">
+                    <div class="icon-toggles">
+                        <button
+                            id="headphonesBtn1"
+                            type="button"
+                            class="rule-icon-btn"
+                            title="Toggle Headphones Allowed / Prohibited">
+                            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                <path d="M12 3a9 9 0 0 0-9 9v7c0 1.1.9 2 2 2h3a1 1 0 0 0 1-1v-6a1 1 0 0 0-1-1H5v-1a7 7 0 0 1 14 0v1h-3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h3c1.1 0 2-.9 2-2v-7a9 9 0 0 0-9-9z"/>
+                            </svg>
+                        </button>
+                        <button
+                            id="calculatorBtn1"
+                            type="button"
+                            class="rule-icon-btn"
+                            title="Toggle Calculator Allowed / Prohibited">
+                            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                <path d="M19 2H5c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM7 5h10v3H7V5zm2 14H7v-2h2v2zm0-3.5H7v-2h2v2zm0-3.5H7v-2h2v2zm4 7h-2v-2h2v2zm0-3.5h-2v-2h2v2zm0-3.5h-2v-2h2v2zm4 7h-2v-5.5h2V19zm0-7h-2v-2h2v2z"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="examDetailsPanel2" class="panel code-instruction-panel">
+        <div class="code-instruction-grid">
+            <div class="code-subbox">
+                <div class="label">Exam Code</div>
+                <input
+                    id="examCode2"
+                    class="exam-code-input"
+                    type="text"
+                    inputmode="numeric"
+                    maxlength="6"
+                    placeholder="n/a">
+            </div>
+            <div class="instr-subbox">
+                <div class="label">Special Exam Instructions</div>
+                <div class="instruction-cell">
+                    <input
+                        id="examInstructions2"
+                        class="exam-instructions-input"
+                        type="text"
+                        placeholder="--">
+                    <div class="icon-toggles">
+                        <button
+                            id="headphonesBtn2"
+                            type="button"
+                            class="rule-icon-btn"
+                            title="Toggle Headphones Allowed / Prohibited">
+                            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                <path d="M12 3a9 9 0 0 0-9 9v7c0 1.1.9 2 2 2h3a1 1 0 0 0 1-1v-6a1 1 0 0 0-1-1H5v-1a7 7 0 0 1 14 0v1h-3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h3c1.1 0 2-.9 2-2v-7a9 9 0 0 0-9-9z"/>
+                            </svg>
+                        </button>
+                        <button
+                            id="calculatorBtn2"
+                            type="button"
+                            class="rule-icon-btn"
+                            title="Toggle Calculator Allowed / Prohibited">
+                            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                <path d="M19 2H5c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM7 5h10v3H7V5zm2 14H7v-2h2v2zm0-3.5H7v-2h2v2zm0-3.5H7v-2h2v2zm4 7h-2v-2h2v2zm0-3.5h-2v-2h2v2zm0-3.5h-2v-2h2v2zm4 7h-2v-5.5h2V19zm0-7h-2v-2h2v2z"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="examDetailsPanel3" class="panel code-instruction-panel hidden">
+        <div class="code-instruction-grid">
+            <div class="code-subbox">
+                <div class="label">Exam Code</div>
+                <input
+                    id="examCode3"
+                    class="exam-code-input"
+                    type="text"
+                    inputmode="numeric"
+                    maxlength="6"
+                    placeholder="n/a">
+            </div>
+            <div class="instr-subbox">
+                <div class="label">Special Exam Instructions</div>
+                <div class="instruction-cell">
+                    <input
+                        id="examInstructions3"
+                        class="exam-instructions-input"
+                        type="text"
+                        placeholder="--">
+                    <div class="icon-toggles">
+                        <button
+                            id="headphonesBtn3"
+                            type="button"
+                            class="rule-icon-btn"
+                            title="Toggle Headphones Allowed / Prohibited">
+                            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                <path d="M12 3a9 9 0 0 0-9 9v7c0 1.1.9 2 2 2h3a1 1 0 0 0 1-1v-6a1 1 0 0 0-1-1H5v-1a7 7 0 0 1 14 0v1h-3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h3c1.1 0 2-.9 2-2v-7a9 9 0 0 0-9-9z"/>
+                            </svg>
+                        </button>
+                        <button
+                            id="calculatorBtn3"
+                            type="button"
+                            class="rule-icon-btn"
+                            title="Toggle Calculator Allowed / Prohibited">
+                            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                <path d="M19 2H5c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM7 5h10v3H7V5zm2 14H7v-2h2v2zm0-3.5H7v-2h2v2zm0-3.5H7v-2h2v2zm4 7h-2v-2h2v2zm0-3.5h-2v-2h2v2zm0-3.5h-2v-2h2v2zm4 7h-2v-5.5h2V19zm0-7h-2v-2h2v2z"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="timesRow" class="times-row">
+    <div id="startTimePanel" class="panel">
+        <div class="label">Start Time</div>
+        <div id="startTime" class="time-value">--:--</div>
+    </div>
+
+    <div id="currentTimePanel" class="panel">
+        <div class="label">Current Time</div>
+        <div id="currentTime">--:--</div>
+    </div>
+
+    <div id="endTimePanel" class="panel">
+        <div class="label">Finish Time</div>
+        <div id="endTime" class="time-value">--:--</div>
+    </div>
+</div>
+
+<div class="controls">
+    <div id="examCountContainer" class="exam-count-control">
+        <span>Exams:</span>
+        <button type="button" class="count-btn" data-count="1">1</button>
+        <button type="button" class="count-btn active" data-count="2">2</button>
+        <button type="button" class="count-btn" data-count="3">3</button>
+    </div>
+
+    <div id="digitalExamContainer">
+        <label class="digital-option" for="digitalExam">
+            <input type="checkbox" id="digitalExam">
+            Digital Exam
+        </label>
+    </div>
+
+    <button
+        id="startResetBtn"
+        type="button"
+        class="start-btn">
+        Start 3 Hour Exam
+    </button>
+
+    <button
+        id="fullscreenBtn"
+        type="button"
+        class="fullscreen-btn">
+        ⛶ Full Screen
+    </button>
+</div>
+
+<div id="preStartPanel" class="prestart-panel">
+    <div id="instructionContainer">
+        <div class="paper-screen">
+            Please sit down quietly at your desk.<br><br>
+            Do not disturb anyone else.<br><br>
+            Check the exam code on your entry slip<br>
+            matches the exam code on the top booklet.
+        </div>
+    </div>
+</div>
+
+<div
+    id="statusBanner"
+    class="status-banner status-closed hidden">
+    🚫 Toilets Closed • Students May Not Leave
+</div>
+
+<div id="countdownBox" class="countdown-box hidden">
+    <div class="countdown-main">
+        <div class="countdown-label">
+            REMAINING TIME
+        </div>
+        <div id="countdown">
+            03:00:00
+        </div>
+    </div>
+
+    <div id="rulerPanel" class="ruler-panel hidden">
+        <div id="rulerTrack" class="ruler-track">
+            <div id="rulerElapsed" class="ruler-elapsed"></div>
+            <div id="rulerNeedle" class="ruler-needle">
+                <svg viewBox="0 0 30 24" aria-hidden="true">
+                    <polygon points="2,2 28,2 15,22" fill="#dc2626" stroke="#000000" stroke-width="2.5" stroke-linejoin="round"/>
+                </svg>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="helpBanner" class="help-banner">
+    ✋ Please raise your hand if you need assistance ✋
+</div>
+
+<script>
+var startTime = null;
+var endTime = null;
+var timerRunning = false;
+var examCount = 2;
+var realExamCodes = { 1: "", 2: "", 3: "" };
+var STORAGE_KEY = "examTimerState_v9";
+
+window.addEventListener("beforeunload", function (e) {
+    if (timerRunning) {
+        e.preventDefault();
+        e.returnValue = "";
+    }
+});
+
+function clearSavedState() {
+    try {
+        localStorage.removeItem(STORAGE_KEY);
+        localStorage.removeItem("examTimerState_v8");
+        localStorage.removeItem("examTimerState_v7");
+        localStorage.removeItem("examTimerState_v6");
+        localStorage.removeItem("examTimerState_v5");
+        localStorage.removeItem("examTimerState_v4");
+        localStorage.removeItem("examTimerState_v3");
+        localStorage.removeItem("examTimerState_v2");
+        localStorage.removeItem("examTimerState");
+    } catch (e) {}
+}
+
+function updateCodeDisplay(idx) {
+    var input = document.getElementById("examCode" + idx);
+    if (!input) return;
+    var code = realExamCodes[idx] || "";
+
+    if (timerRunning) {
+        input.classList.remove("masked");
+        input.value = code;
+    } else {
+        if (code.length > 0) {
+            input.classList.add("masked");
+            input.value = "•".repeat(code.length);
+        } else {
+            input.classList.remove("masked");
+            input.value = "";
+        }
+    }
+}
+
+function updateAllCodeDisplays() {
+    for (var i = 1; i <= 3; i++) {
+        updateCodeDisplay(i);
+    }
+}
+
+function saveState() {
+    try {
+        var state = {
+            examCount: examCount,
+            examName1: document.getElementById("examName1").value,
+            examName2: document.getElementById("examName2").value,
+            examName3: document.getElementById("examName3").value,
+            examCode1: realExamCodes[1],
+            examCode2: realExamCodes[2],
+            examCode3: realExamCodes[3],
+            examInstructions1: document.getElementById("examInstructions1").value,
+            examInstructions2: document.getElementById("examInstructions2").value,
+            examInstructions3: document.getElementById("examInstructions3").value,
+            headphones1: document.getElementById("headphonesBtn1").classList.contains("crossed"),
+            headphones2: document.getElementById("headphonesBtn2").classList.contains("crossed"),
+            headphones3: document.getElementById("headphonesBtn3").classList.contains("crossed"),
+            calculator1: document.getElementById("calculatorBtn1").classList.contains("crossed"),
+            calculator2: document.getElementById("calculatorBtn2").classList.contains("crossed"),
+            calculator3: document.getElementById("calculatorBtn3").classList.contains("crossed"),
+            digitalExam: document.getElementById("digitalExam").checked,
+            startTime: startTime ? startTime.getTime() : null,
+            endTime: endTime ? endTime.getTime() : null,
+            timerRunning: timerRunning
+        };
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    } catch (e) {}
+}
+
+function setExamCount(count) {
+    examCount = count;
+
+    var namesRow = document.getElementById("examNamesRow");
+    var detailsRow = document.getElementById("examDetailsRow");
+
+    namesRow.className = "exam-header-row cols-" + count;
+    detailsRow.className = "exam-header-row cols-" + count;
+
+    for (var i = 1; i <= 3; i++) {
+        var namePanel = document.getElementById("examNamePanel" + i);
+        var detailsPanel = document.getElementById("examDetailsPanel" + i);
+        if (i <= count) {
+            namePanel.classList.remove("hidden");
+            detailsPanel.classList.remove("hidden");
+        } else {
+            namePanel.classList.add("hidden");
+            detailsPanel.classList.add("hidden");
+        }
+    }
+
+    var countBtns = document.querySelectorAll(".count-btn");
+    countBtns.forEach(function (btn) {
+        if (Number(btn.getAttribute("data-count")) === count) {
+            btn.classList.add("active");
+        } else {
+            btn.classList.remove("active");
+        }
+    });
+}
+
+function resetExam() {
+    timerRunning = false;
+    startTime = null;
+    endTime = null;
+    realExamCodes = { 1: "", 2: "", 3: "" };
+    document.getElementById("startTime").textContent = "--:--";
+    document.getElementById("endTime").textContent = "--:--";
+    clearSavedState();
+    location.reload();
+}
+
+function startOrResetExam() {
+    if (!timerRunning && !startTime) {
+        startTimer();
+        var btn = document.getElementById("startResetBtn");
+        btn.textContent = "Reset Exam";
+        btn.className = "reset-btn";
+    } else {
+        if (confirm("Reset exam and clear timer?")) {
+            resetExam();
+        }
+    }
+}
+
+function formatTime(date) {
+    return date.toLocaleTimeString("en-NZ", {
+        hour: "numeric",
+        minute: "2-digit",
+        hour12: true
+    });
+}
+
+function restoreState() {
+    var saved = null;
+    try {
+        saved = localStorage.getItem(STORAGE_KEY);
+    } catch (e) {
+        return;
+    }
+
+    if (!saved) return;
+
+    var state;
+    try {
+        state = JSON.parse(saved);
+    } catch (e) {
+        clearSavedState();
+        return;
+    }
+
+    setExamCount(state.examCount || 2);
+
+    document.getElementById("examName1").value = state.examName1 || "";
+    document.getElementById("examName2").value = state.examName2 || "";
+    document.getElementById("examName3").value = state.examName3 || "";
+
+    realExamCodes[1] = (state.examCode1 || "").replace(/\D/g, "").slice(0, 6);
+    realExamCodes[2] = (state.examCode2 || "").replace(/\D/g, "").slice(0, 6);
+    realExamCodes[3] = (state.examCode3 || "").replace(/\D/g, "").slice(0, 6);
+
+    document.getElementById("examInstructions1").value = state.examInstructions1 || "";
+    document.getElementById("examInstructions2").value = state.examInstructions2 || "";
+    document.getElementById("examInstructions3").value = state.examInstructions3 || "";
+
+    document.getElementById("headphonesBtn1").classList.toggle("crossed", Boolean(state.headphones1));
+    document.getElementById("headphonesBtn2").classList.toggle("crossed", Boolean(state.headphones2));
+    document.getElementById("headphonesBtn3").classList.toggle("crossed", Boolean(state.headphones3));
+    document.getElementById("calculatorBtn1").classList.toggle("crossed", Boolean(state.calculator1));
+    document.getElementById("calculatorBtn2").classList.toggle("crossed", Boolean(state.calculator2));
+    document.getElementById("calculatorBtn3").classList.toggle("crossed", Boolean(state.calculator3));
+
+    document.getElementById("digitalExam").checked = Boolean(state.digitalExam);
+
+    updateInstructions();
+
+    if (state.startTime && state.endTime && state.timerRunning) {
+        if (Date.now() >= state.endTime) {
+            clearSavedState();
+            updateAllCodeDisplays();
+            return;
+        }
+
+        startTime = new Date(state.startTime);
+        endTime = new Date(state.endTime);
+        timerRunning = true;
+
+        updateAllCodeDisplays();
+
+        var btn = document.getElementById("startResetBtn");
+        btn.textContent = "Reset Exam";
+        btn.className = "reset-btn";
+
+        document.getElementById("digitalExamContainer").classList.add("hidden");
+        document.getElementById("examCountContainer").classList.add("hidden");
+        document.getElementById("preStartPanel").classList.add("hidden");
+
+        document.getElementById("statusBanner").classList.remove("hidden");
+        document.getElementById("countdownBox").classList.remove("hidden");
+        document.getElementById("rulerPanel").classList.remove("hidden");
+
+        document.getElementById("startTime").textContent = formatTime(startTime);
+        document.getElementById("endTime").textContent = formatTime(endTime);
+
+        buildRuler();
+        updateTimer();
+    } else {
+        updateAllCodeDisplays();
+    }
+}
+
+function updateCurrentTime() {
+    var el = document.getElementById("currentTime");
+    if (el) {
+        el.textContent = new Date().toLocaleTimeString("en-NZ", {
+            hour: "numeric",
+            minute: "2-digit",
+            hour12: true
+        });
+    }
+}
+
+function buildRuler() {
+    var track = document.getElementById("rulerTrack");
+    track.innerHTML =
+        '<div id="rulerElapsed" class="ruler-elapsed"></div>' +
+        '<div id="rulerNeedle" class="ruler-needle">' +
+            '<svg viewBox="0 0 30 24" aria-hidden="true">' +
+                '<polygon points="2,2 28,2 15,22" fill="#dc2626" stroke="#000000" stroke-width="2.5" stroke-linejoin="round"/>' +
+            '</svg>' +
+        '</div>';
+
+    var totalMinutes = 180;
+    var milestoneLabels = {
+        0: "Start",
+        60: "1 Hour",
+        120: "2 Hours",
+        180: "Finish"
+    };
+
+    for (var m = 0; m <= totalMinutes; m += 5) {
+        var pct = (m / totalMinutes) * 100;
+
+        if (m > 0 && m < totalMinutes) {
+            var tick = document.createElement("div");
+            tick.style.left = pct + "%";
+
+            if (m === 60 || m === 120) {
+                tick.className = "ruler-tick hour";
+            } else if (m % 30 === 0) {
+                tick.className = "ruler-tick major";
+            } else if (m % 15 === 0) {
+                tick.className = "ruler-tick quarter";
+            } else {
+                tick.className = "ruler-tick minor";
+            }
+            track.appendChild(tick);
+        }
+
+        if (m % 30 === 0) {
+            var tickTime = new Date(startTime.getTime() + m * 60 * 1000);
+            var label = document.createElement("div");
+            label.className = "ruler-label";
+            label.style.left = pct + "%";
+            label.textContent = formatTime(tickTime);
+            track.appendChild(label);
+        }
+
+        if (milestoneLabels[m]) {
+            var badge = document.createElement("div");
+            badge.className = "ruler-hour-badge";
+            badge.style.left = pct + "%";
+            badge.textContent = milestoneLabels[m];
+            track.appendChild(badge);
+        }
+    }
+}
+
+function updateInstructions() {
+    var digital = document.getElementById("digitalExam").checked;
+    var container = document.getElementById("instructionContainer");
+
+    if (!digital) {
+        container.innerHTML =
+            '<div class="paper-screen">' +
+            'Please sit down quietly at your desk.<br><br>' +
+            'Do not disturb anyone else.<br><br>' +
+            'Check the exam code on your entry slip<br>' +
+            'matches the exam code on the top booklet.' +
+            '</div>';
+        return;
+    }
+
+    container.innerHTML =
+        '<div class="digital-screen">' +
+            '<div class="digital-column">' +
+                '<div class="digital-title">Device + Login</div>' +
+                '<div class="digital-arrow">↓</div>' +
+                '<div class="digital-link">www2.nzqa.govt.nz</div>' +
+                '<div class="digital-arrow">↓</div>' +
+                '<div class="digital-highlight">Log In Now</div>' +
+                '<div class="digital-arrow">↓</div>' +
+                '<div class="digital-step">Log in</div>' +
+                '<div class="digital-arrow">↓</div>' +
+                '<div class="digital-step">Proceed through intro pages</div>' +
+                '<div class="digital-arrow">↓</div>' +
+                '<div class="digital-step">Wait for exam code</div>' +
+            '</div>' +
+            '<div class="digital-column">' +
+                '<div class="digital-title">Device + No Login</div>' +
+                '<div class="digital-arrow">↓</div>' +
+                '<div class="digital-link">www.nzqa.govt.nz/NCEAbackup</div>' +
+                '<div class="digital-arrow">↓</div>' +
+                '<div class="digital-step">Raise hand for verification code</div>' +
+                '<div class="digital-arrow">↓</div>' +
+                '<div class="digital-step">Log in</div>' +
+                '<div class="digital-arrow">↓</div>' +
+                '<div class="digital-step">Proceed through intro pages</div>' +
+                '<div class="digital-arrow">↓</div>' +
+                '<div class="digital-step">Wait for exam code</div>' +
+            '</div>' +
+            '<div class="digital-column">' +
+                '<div class="digital-title">No Device</div>' +
+                '<div class="digital-arrow">↓</div>' +
+                '<div class="digital-step">Sit quietly and wait for paper exam distribution to be announced by the supervisor</div>' +
+            '</div>' +
+        '</div>';
+}
+
+function startTimer() {
+    if (timerRunning) return;
+
+    document.querySelector(".countdown-label").style.display = "";
+    document.getElementById("countdown").classList.remove("exam-ended");
+
+    document.getElementById("preStartPanel").classList.add("hidden");
+    document.getElementById("digitalExamContainer").classList.add("hidden");
+    document.getElementById("examCountContainer").classList.add("hidden");
+
+    document.getElementById("statusBanner").classList.remove("hidden");
+    document.getElementById("countdownBox").classList.remove("hidden");
+    document.getElementById("rulerPanel").classList.remove("hidden");
+
+    startTime = new Date();
+    endTime = new Date(startTime.getTime() + (3 * 60 * 60 * 1000));
+
+    document.getElementById("startTime").textContent = formatTime(startTime);
+    document.getElementById("endTime").textContent = formatTime(endTime);
+
+    buildRuler();
+
+    timerRunning = true;
+    updateAllCodeDisplays();
+    saveState();
+    updateTimer();
+}
+
+function updateTimer() {
+    if (!timerRunning) return;
+
+    var now = new Date();
+    var remaining = endTime - now;
+
+    if (remaining <= 0) {
+        remaining = 0;
+        timerRunning = false;
+        startTime = null;
+        endTime = null;
+
+        clearSavedState();
+
+        var btn = document.getElementById("startResetBtn");
+        btn.textContent = "Start 3 Hour Exam";
+        btn.className = "start-btn";
+
+        document.getElementById("rulerPanel").classList.add("hidden");
+        document.getElementById("digitalExamContainer").classList.remove("hidden");
+        document.getElementById("examCountContainer").classList.remove("hidden");
+
+        var endBanner = document.getElementById("statusBanner");
+        endBanner.className = "status-banner status-closed";
+        endBanner.textContent = "🏁 EXAM HAS ENDED";
+
+        var countdownEl = document.getElementById("countdown");
+        countdownEl.textContent = "EXAM HAS ENDED";
+        countdownEl.classList.add("exam-ended");
+        document.querySelector(".countdown-label").style.display = "none";
+
+        return;
+    }
+
+    var hrs = Math.floor(remaining / 3600000);
+    var mins = Math.floor((remaining % 3600000) / 60000);
+    var secs = Math.floor((remaining % 60000) / 1000);
+
+    document.getElementById("countdown").textContent =
+        String(hrs).padStart(2, "0") + ":" +
+        String(mins).padStart(2, "0") + ":" +
+        String(secs).padStart(2, "0");
+
+    var totalDuration = endTime - startTime;
+    var elapsedMs = now - startTime;
+    var progressPct = Math.min(100, Math.max(0, (elapsedMs / totalDuration) * 100));
+
+    var elapsedEl = document.getElementById("rulerElapsed");
+    var needleEl = document.getElementById("rulerNeedle");
+    if (elapsedEl) elapsedEl.style.width = progressPct + "%";
+    if (needleEl) needleEl.style.left = progressPct + "%";
+
+    var elapsedMinutes = elapsedMs / 60000;
+    var remainingMinutes = remaining / 60000;
+    var banner = document.getElementById("statusBanner");
+
+    if (elapsedMinutes >= 45 && remainingMinutes > 15) {
+        banner.className = "status-banner status-open";
+        banner.textContent = "✅ Toilets Open • Students May Leave";
+    } else {
+        banner.className = "status-banner status-closed";
+        banner.textContent = "🚫 Toilets Closed • Students May Not Leave";
+    }
+}
+
+function toggleFullscreen() {
+    if (!document.fullscreenElement) {
+        if (document.documentElement.requestFullscreen) {
+            document.documentElement.requestFullscreen();
+        }
+    } else {
+        if (document.exitFullscreen) {
+            document.exitFullscreen();
+        }
+    }
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+    for (var i = 1; i <= 3; i++) {
+        document.getElementById("examName" + i).addEventListener("input", saveState);
+        document.getElementById("examInstructions" + i).addEventListener("input", saveState);
+
+        (function (idx) {
+            var codeInput = document.getElementById("examCode" + idx);
+
+            codeInput.addEventListener("beforeinput", function (e) {
+                if (timerRunning) return;
+                if (e.inputType === "insertText" || e.inputType === "insertFromPaste") {
+                    var incoming = (e.data || "").replace(/\D/g, "");
+                    if (!incoming) {
+                        e.preventDefault();
+                        return;
+                    }
+                    var current = realExamCodes[idx] || "";
+                    var spaceLeft = 6 - current.length;
+                    if (spaceLeft > 0) {
+                        realExamCodes[idx] = current + incoming.slice(0, spaceLeft);
+                    }
+                    e.preventDefault();
+                    updateCodeDisplay(idx);
+                    saveState();
+                } else if (e.inputType === "deleteContentBackward") {
+                    realExamCodes[idx] = (realExamCodes[idx] || "").slice(0, -1);
+                    e.preventDefault();
+                    updateCodeDisplay(idx);
+                    saveState();
+                } else if (e.inputType === "deleteContentForward" || e.inputType === "deleteByCut") {
+                    realExamCodes[idx] = "";
+                    e.preventDefault();
+                    updateCodeDisplay(idx);
+                    saveState();
+                }
+            });
+
+            codeInput.addEventListener("input", function () {
+                if (timerRunning) {
+                    var digits = codeInput.value.replace(/\D/g, "").slice(0, 6);
+                    realExamCodes[idx] = digits;
+                    codeInput.value = digits;
+                    saveState();
+                } else {
+                    var raw = codeInput.value.replace(/[^0-9•]/g, "");
+                    var addedDigits = raw.replace(/•/g, "");
+                    var keptDots = (raw.match(/•/g) || []).length;
+                    var existing = (realExamCodes[idx] || "").slice(0, keptDots);
+                    realExamCodes[idx] = (existing + addedDigits).slice(0, 6);
+                    updateCodeDisplay(idx);
+                    saveState();
+                }
+            });
+
+            var hpBtn = document.getElementById("headphonesBtn" + idx);
+            var calcBtn = document.getElementById("calculatorBtn" + idx);
+
+            hpBtn.addEventListener("click", function () {
+                hpBtn.classList.toggle("crossed");
+                saveState();
+            });
+
+            calcBtn.addEventListener("click", function () {
+                calcBtn.classList.toggle("crossed");
+                saveState();
+            });
+        })(i);
+    }
+
+    document.querySelectorAll(".count-btn").forEach(function (btn) {
+        btn.addEventListener("click", function () {
+            setExamCount(Number(btn.getAttribute("data-count")));
+            saveState();
+        });
+    });
+
+    document.getElementById("digitalExam").addEventListener("change", function () {
+        updateInstructions();
+        saveState();
+    });
+
+    document.getElementById("startResetBtn").addEventListener("click", startOrResetExam);
+    document.getElementById("fullscreenBtn").addEventListener("click", toggleFullscreen);
+
+    document.addEventListener("fullscreenchange", function () {
+        document.getElementById("fullscreenBtn").textContent =
+            document.fullscreenElement ? "⤢ Exit Full Screen" : "⛶ Full Screen";
+    });
+
+    try {
+        restoreState();
+    } catch (e) {
+        clearSavedState();
+    }
+
+    updateCurrentTime();
+    setInterval(updateCurrentTime, 1000);
+    setInterval(updateTimer, 1000);
+});
+</script>
+
+</body>
+</html>
