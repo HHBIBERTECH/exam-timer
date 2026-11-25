@@ -5,9 +5,8 @@ A single-file, browser-based classroom exam timer built for exam supervisors. De
 ---
 
 ## Getting Started
-
-1. Enter the URL https://hhbibertech.github.io/exam-timer/
-2. Double-click the file to open it in any modern web browser (Chrome, Edge, Safari, or Firefox)—no internet connection or installation required.
+- **Online:** Open [https://hhbibertech.github.io/exam-timer/](https://hhbibertech.github.io/exam-timer/) in any modern web browser.
+- **Offline:** Download `index.html` and double-click it to open in any modern web browser (Chrome, Edge, Safari, or Firefox)—no internet connection or installation required.
 
 ---
 
