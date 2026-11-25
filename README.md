@@ -18,7 +18,7 @@ A single-file, browser-based classroom exam timer built for exam supervisors. De
 
 ## Getting Started
 
-1. Download or save the HTML file (e.g., `index.html`) to your computer.
+1. Enter the URL https://hhbibertech.github.io/exam-timer/
 2. Double-click the file to open it in any modern web browser (Chrome, Edge, Safari, or Firefox)—no internet connection or installation required.
 
 ---
@@ -35,7 +35,7 @@ A single-file, browser-based classroom exam timer built for exam supervisors. De
 * **Paper vs. Digital Instructions:**
   * Leave **Digital Exam** unchecked to display standard paper-exam desk instructions.
   * Check **Digital Exam** to display the three-column NZQA login and backup instructions.
-* **Display Controls:** Click **⛶ Full Screen** to fill the classroom screen
+* **Display Controls:** Click **⛶ Full Screen** to fill the classroom screen, and press `Ctrl + 0` (`Cmd + 0` on Mac) if you need to reset browser zoom to 100%.
 
 ### 2. Running the 3-Hour Exam
 * **Starting the Timer:** Click **Start 3 Hour Exam** at the official start time. Setup controls hide automatically, **Exam Codes** reveal in full, and **Start Time** and **Finish Time** (exact 3-hour mark) populate automatically.
@@ -47,3 +47,10 @@ A single-file, browser-based classroom exam timer built for exam supervisors. De
 ### 3. Saving, Refreshing & Resetting
 * **Accidental Refresh Protection:** If the browser is refreshed mid-exam, the timer, entered text, exam codes, and icon states restore automatically.
 * **Resetting:** Click the muted **Reset Exam** button and confirm the prompt to clear the timer and return to the pre-exam setup screen.
+
+## Author
+**Holger Heinzel (Bibertech)**
+* GitHub: [@HHBIBERTECH](https://github.com/HHBIBERTECH)
+
+## License
+This project is licensed under the [MIT License](LICENSE).
